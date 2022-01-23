@@ -29,11 +29,10 @@ class CustomerValidation {
 
         try {
             $customerValidator->assert($customer);
+            return $request;
         } catch(NestedValidationException $ex) {
 
-            $coll = collect($ex->getMessages());
-
-            $messages = $coll->flatten();
+            $messages = $ex->getMessages();
 
             foreach ($messages as $message) {
                 echo $message . "\n";

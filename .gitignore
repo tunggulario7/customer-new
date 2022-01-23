@@ -1,7 +1,7 @@
-customer-loan/.idea/
 .vscode/
 /coverage/
 /vendor/
 /logs/*
 !/logs/README.md
 .phpunit.result.cache
+/public/export/*
