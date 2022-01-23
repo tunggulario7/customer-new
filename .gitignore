@@ -4,4 +4,3 @@
 /logs/*
 !/logs/README.md
 .phpunit.result.cache
-/public/export/*
