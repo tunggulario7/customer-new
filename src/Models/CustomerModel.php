@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Respect\Validation\Exceptions\NestedValidationException;
+use Respect\Validation\Validator as V;
+
 class CustomerModel
 {
 
@@ -81,5 +84,41 @@ class CustomerModel
     public function setSex($sex): void
     {
         $this->sex = $sex;
+    }
+
+    /**
+     * Function for validation request
+     * @param $request
+     * @param $response
+     */
+    public function validate($request, $response) {
+        $this->setName($request['name']);
+        $this->setKtp($request['ktp']);
+        $this->setLoanAmount($request['loanAmount']);
+        $this->setLoanPeriod($request['loanPeriod']);
+        $this->setLoanPurpose($request['loanPurpose']);
+        $this->setDateOfBirth($request['dateOfBirth']);
+        $this->setSex($request['sex']);
+
+
+        $customerValidator = v::attribute('name', v::alpha(' '))
+            ->attribute('ktp', v::number())
+            ->attribute('loanAmount', v::number()->between(1000, 10000))
+            ->attribute('loanPeriod', v::number()->between(1, 12))
+            ->attribute('loanPurpose', v::in(['vacation', 'renovation', 'electronics', 'wedding', 'rent', 'car', 'investment']))
+            ->attribute('dateOfBirth', v::date())
+            ->attribute('sex', v::alpha());
+
+        try {
+            $customerValidator->assert($this);
+            return $request;
+        } catch(NestedValidationException $ex) {
+
+            $messages = $ex->getMessages();
+
+            foreach ($messages as $message) {
+                echo $message . "\n";
+            }
+        }
     }
 }

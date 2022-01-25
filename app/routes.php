@@ -14,6 +14,6 @@ return function (App $app) {
     });
 
     $app->group('/customer', function (Group $group) {
-        $group->post('', 'App\Controllers\CustomerController::send')->setName('send');
+        $group->post('', 'App\Controllers\CustomerController::insert')->setName('insert-data');
     });
 };
