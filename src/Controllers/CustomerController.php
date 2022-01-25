@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class CustomerController extends Controller
 {
 
-    public function insert(Request $request, Response $response)
+    public function insert(Request $request, Response $response): Response
     {
         $customerValidation = new CustomerModel();
         $validation = $customerValidation->validate($request->getParsedBody(), $response);
@@ -19,7 +19,8 @@ class CustomerController extends Controller
         if($validation) {
             //Get Base Directory
             $dir = explode("/", __DIR__);
-            $sliceDir = array_slice($dir, 0, 3);
+            $countSlice = count($dir) - 2;
+            $sliceDir = array_slice($dir, 0, $countSlice);
             $impDir = implode("/", $sliceDir);
 
             //Create File in Public Directory
@@ -39,7 +40,8 @@ class CustomerController extends Controller
 
         //Get Base Directory
         $dir = explode("/", __DIR__);
-        $sliceDir = array_slice($dir, 0, 3);
+        $countSlice = count($dir) - 2;
+        $sliceDir = array_slice($dir, 0, $countSlice);
         $impDir = implode("/", $sliceDir);
 
         //Create File in Public Directory
