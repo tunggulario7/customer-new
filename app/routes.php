@@ -15,5 +15,6 @@ return function (App $app) {
 
     $app->group('/customer', function (Group $group) {
         $group->post('', 'App\Controllers\CustomerController::insert')->setName('insert-data');
+        $group->get('', 'App\Controllers\CustomerController::get')->setName('get-data');
     });
 };

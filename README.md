@@ -18,11 +18,57 @@ http://localhost:8080/customer
 ### Json Body Example for POST Customer Data :
 
 {
-"name": "Tunggul Ario",
+"name": "Lorem Ipsum",
+
 "ktp": 123456789,
+
 "loanAmount": 5000,
+
 "loanPeriod": 12,
+
 "loanPurpose": "vacation",
-"dateOfBirth": "1992-12-23",
+
+"dateOfBirth": "2000-01-22",
+
 "sex": "Male"
 }
+
+
+## Url for GET Customer Data :
+http://localhost:8080/customer
+
+### Json Response Example for GET Customer Data :
+
+[
+{
+"name": "Lorem Ipsum",
+
+"ktp": "123456789",
+
+"loanAmount": "5000",
+
+"loanPeriod": "12",
+
+"loanPurpose": "vacation",
+
+"dateOfBirth": "2000-01-22",
+
+"sex": "Male"
+},
+
+{
+"name": "Dolor Ipsum",
+
+"ktp": "987654321",
+
+"loanAmount": "7000",
+
+"loanPeriod": "6",
+
+"loanPurpose": "renovation",
+
+"dateOfBirth": "1999-01-22",
+
+"sex": "Male"
+}
+]
