@@ -25,3 +25,14 @@ services:
         volumes:
             - .:/var/www
             - ./logs:/var/www/logs
+            
+    db_local:
+        image: mysql:8.0
+        container_name: db_local
+        environment:
+            - MYSQL_ROOT_PASSWORD=admin123
+            - MYSQL_DATABASE=Tunaiku_Loan
+        volumes:
+            - ./mysql:/var/lib/mysql
+        ports:
+            - "3357:3306"

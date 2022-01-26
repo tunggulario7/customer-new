@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Core\Controller;
@@ -7,16 +9,23 @@ use App\Models\CustomerModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-
 class CustomerController extends Controller
 {
 
     public function insert(Request $request, Response $response): Response
     {
+        $requestBody = $request->getParsedBody();
         $customerValidation = new CustomerModel();
-        $validation = $customerValidation->validate($request->getParsedBody(), $response);
+        $validation = $customerValidation->validate($requestBody);
 
-        if($validation) {
+        //Decalre Variable for Return Response
+        $returnBody = '{
+                    "status": "OK",
+                    "message": "Success"
+                }';
+        $statusCode = 200;
+
+        if (empty($validation)) {
             //Get Base Directory
             $dir = explode("/", __DIR__);
             $countSlice = count($dir) - 2;
@@ -25,14 +34,17 @@ class CustomerController extends Controller
 
             //Create File in Public Directory
             $fileName = $impDir . "/public/export/data-customer.txt";
-            $data = $validation['name'] . "|" . $validation['ktp'] . "|" . $validation['loanAmount'] . "|" . $validation['loanPeriod'] . "|" . $validation['loanPurpose'] . "|" . $validation['dateOfBirth'] . "|" . $validation['sex'] . PHP_EOL;
+            $data = $requestBody['name'] . "|" . $requestBody['ktp'] . "|" . $requestBody['loanAmount'] . "|" . $requestBody['loanPeriod'] . "|" . $requestBody['loanPurpose'] . "|" . $requestBody['dateOfBirth'] . "|" . $requestBody['sex'] . PHP_EOL;
             file_put_contents($fileName, $data, FILE_APPEND);
+        } else {
+            $returnBody = json_encode($validation);
+            $statusCode = 422;
         }
 
-        $response->getBody()->write(json_encode($validation));
+        $response->getBody()->write($returnBody);
         return $response
             ->withHeader('Content-Type', 'application/json')
-            ->withStatus(200);
+            ->withStatus($statusCode);
     }
 
     public function get(Request $request, Response $response)
@@ -50,12 +62,12 @@ class CustomerController extends Controller
         $data = fread($file, filesize($fileName));
         fclose($file);
 
-        $dataJson = array();
+        $dataJson = [];
         $explodeRow = explode(PHP_EOL, $data);
         foreach ($explodeRow as $row) {
             if ($row) {
                 $expColumn = explode('|', $row);
-                array_push($dataJson, [
+                $dataJson[] = [
                     "name" => $expColumn[0],
                     "ktp" => $expColumn[1],
                     "loanAmount" => $expColumn[2],
@@ -63,7 +75,7 @@ class CustomerController extends Controller
                     "loanPurpose" => $expColumn[4],
                     "dateOfBirth" => $expColumn[5],
                     "sex" => $expColumn[6]
-                ]);
+                ];
             }
         }
 
@@ -72,5 +84,4 @@ class CustomerController extends Controller
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
-
 }

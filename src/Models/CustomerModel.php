@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Respect\Validation\Exceptions\NestedValidationException;
@@ -8,13 +10,13 @@ use Respect\Validation\Validator as V;
 class CustomerModel
 {
 
-    private $name;
-    private $ktp;
-    private $loanAmount;
-    private $loanPeriod;
-    private $loanPurpose;
-    private $dateOfBirth;
-    private $sex;
+    private string $name;
+    private int $ktp;
+    private string $loanAmount;
+    private int $loanPeriod;
+    private string $loanPurpose;
+    private string $dateOfBirth;
+    private string $sex;
 
     public function getName(): string
     {
@@ -63,7 +65,7 @@ class CustomerModel
 
     public function setLoanPurpose($loanPurpose): void
     {
-        $this->ktp = $loanPurpose;
+        $this->loanPurpose = $loanPurpose;
     }
 
     public function getDateOfBirth(): string
@@ -89,9 +91,10 @@ class CustomerModel
     /**
      * Function for validation request
      * @param $request
-     * @param $response
+     * @return array|mixed
      */
-    public function validate($request, $response) {
+    public function validate($request)
+    {
         $this->setName($request['name']);
         $this->setKtp($request['ktp']);
         $this->setLoanAmount($request['loanAmount']);
@@ -109,16 +112,17 @@ class CustomerModel
             ->attribute('dateOfBirth', v::date())
             ->attribute('sex', v::alpha());
 
+        $errorMessage = [];
         try {
             $customerValidator->assert($this);
-            return $request;
-        } catch(NestedValidationException $ex) {
-
+        } catch (NestedValidationException $ex) {
             $messages = $ex->getMessages();
+//            var_dump($messages);
 
             foreach ($messages as $message) {
-                echo $message . "\n";
+                $errorMessage[] = $message;
             }
         }
+        return $errorMessage;
     }
 }
