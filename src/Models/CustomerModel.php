@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Respect\Validation\Exceptions\NestedValidationException;
+use Respect\Validation\Factory;
 use Respect\Validation\Validator as V;
 
 class CustomerModel
@@ -95,6 +96,12 @@ class CustomerModel
      */
     public function validate($request)
     {
+        Factory::setDefaultInstance(
+            (new Factory())
+                ->withRuleNamespace('App\\Validation\\Rules')
+                ->withExceptionNamespace('App\\Validation\\Exceptions')
+        );
+
         $this->setName($request['name']);
         $this->setKtp($request['ktp']);
         $this->setLoanAmount($request['loanAmount']);
@@ -103,22 +110,19 @@ class CustomerModel
         $this->setDateOfBirth($request['dateOfBirth']);
         $this->setSex($request['sex']);
 
-
         $customerValidator = v::attribute('name', v::alpha(' '))
-            ->attribute('ktp', v::number())
+            ->attribute('ktp', v::KtpRule($this->getDateOfBirth(), $this->getSex()))
             ->attribute('loanAmount', v::number()->between(1000, 10000))
             ->attribute('loanPeriod', v::number()->between(1, 12))
             ->attribute('loanPurpose', v::in(['vacation', 'renovation', 'electronics', 'wedding', 'rent', 'car', 'investment']))
             ->attribute('dateOfBirth', v::date())
-            ->attribute('sex', v::alpha());
+            ->attribute('sex', v::in(['M', 'F']));
 
         $errorMessage = [];
         try {
             $customerValidator->assert($this);
         } catch (NestedValidationException $ex) {
             $messages = $ex->getMessages();
-//            var_dump($messages);
-
             foreach ($messages as $message) {
                 $errorMessage[] = $message;
             }

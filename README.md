@@ -30,7 +30,7 @@ http://localhost:8080/customer
 
 "dateOfBirth": "2000-01-22",
 
-"sex": "Male"
+"sex": "M"
 }
 
 
