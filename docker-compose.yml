@@ -19,13 +19,15 @@ services:
     slim:
         container_name: slim_php
         build:
-            context: docker/php
+            context: docker/php/
+            dockerfile: Dockerfile
         ports:
             - '9000:9000'
         volumes:
             - .:/var/www
-            - ./logs:/var/www/logs
-            
+            - logs:/var/www/logs
+#            - docker/php/php.ini:/usr/local/etc/php.ini
+
     db_local:
         image: mysql:8.0
         container_name: db_local
@@ -34,5 +36,5 @@ services:
             - MYSQL_DATABASE=Tunaiku_Loan
         volumes:
             - ./mysql:/var/lib/mysql
-        ports:
-            - "3357:3306"
+#        ports:
+#            - "3357:3306"

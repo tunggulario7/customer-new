@@ -16,5 +16,19 @@ return function (App $app) {
     $app->group('/customer', function (Group $group) {
         $group->post('', 'App\Controllers\CustomerController::insert')->setName('insert-data');
         $group->get('', 'App\Controllers\CustomerController::get')->setName('get-data');
+        $group->get('/data', 'App\Controllers\CustomerController:getCustomer')->setName('get-customer-data');
+
+        $group->get('/db-test', function (Request $request, Response $response) {
+            $db = new PDO("mysql:host=127.0.0.1;dbname=coba;port=3357;", 'root', 'admin123');
+            $sth = $db->prepare("SELECT * FROM coba");
+            $sth->execute();
+            $data = $sth->fetchAll(PDO::FETCH_ASSOC);
+            $payload = json_encode($data);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        });
     });
+
+
+
 };
